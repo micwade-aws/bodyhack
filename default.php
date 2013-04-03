@@ -12,15 +12,14 @@ p {color:white;}
 <p>This is data I collected automatically via my Withings Scale...
 <pre>
 <?php
-  // Need all this stuff
-  include("./config.php");
+  // Need all this stuff 
   require("./wbs.php");
+  require("./config.php");
   require_once("./bodyhack.php");
   
   // Setup the Withings Body Scale (WBS) interface
-  $wbs = new wbs_Account();
-  $wbs->setUserEmail($withings_user);
-  $wbs->setUserPassword($withings_passwd);
+  $wbs = new wbs_Account();  
+  $wbs->setUserFromFile("mylogininfo.txt");
   
   // Initialize the bodyhack application with the WBS and account info
   ///initBodyHack($wbs, $withings_user);
@@ -55,7 +54,8 @@ p {color:white;}
   
   foreach ($usersList as $user) {
     $user->setLimit(60);
-	$user->setStartdate(date("U",mktime(0,0,0,12,25,2012)));
+	//$user->setStartdate(date("U",mktime(0,0,0,12,25,2012)));
+	$user->setStartdate(date("U",mktime(0,0,0,03,15,2013)));
     $user->setEnddate(time());
     $measuresgroups = $user->getMeasures();
 	print $user->getFullname() . "\n";

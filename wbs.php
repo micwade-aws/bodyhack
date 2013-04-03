@@ -82,12 +82,15 @@ abstract class wbs {
                    $service,
                    $action,
                    implode('&', $parameters));
+	print $url;
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_POST, false);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_URL, $url);
     $result = json_decode(curl_exec($ch), true);
     curl_close($ch);
+	
+	print $result[0];
 
     if (!is_array($result)) {
       throw new remoteCallWbsException("Didn't get a valid array in response");
@@ -131,6 +134,30 @@ class wbs_Account extends wbs {
     }
     return (count($users) > 0)? $users : false;
   }
+    // User Credentials
+	// MJW: Added this on 4/2/2013
+	/* 
+	You should have created a file that looks like this (only 2 lines):
+	username=yourwithingslogin
+	password=yourwithingspassword
+
+	I did not put it into the repo for security reasons.  I actually hate 
+	this solution, but it's the easiest way to do this for now..
+	*/
+	public function setUserFromFile($filename="mylogininfo.txt"){		
+		$file_handle = fopen($filename, "r");
+		while (!feof($file_handle)) {  
+		   $line = split("=", fgets($file_handle)); //line 1
+		   $user = $line[1];
+		   $line = split("=", fgets($file_handle)); //line 2
+		   $passwd = $line[1];
+		}
+		// The trim and replace are necessary...
+		$this->userEmail = trim(str_replace(PHP_EOL, '', $user));
+		$this->userPassword = trim(str_replace(PHP_EOL, '', $passwd));
+		fclose($file_handle);
+	}
+
 
   public function setUserEmail($email) {
     $this->userEmail = $email;
